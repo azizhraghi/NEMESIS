@@ -406,40 +406,36 @@ const AGENTS = [
   { id: "shadow", label: "SHADOW", color: C.textMid, role: "Threat Analysis" }
 ];
 
+const AnimatedImageBg = ({ src, fx }) => {
+  return (
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0, backgroundColor: "#000" }}>
+      <style>{`
+        @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+        @keyframes rainFall { 0% { background-position: 0 0; } 100% { background-position: -50px 100px; } }
+        @keyframes drift { 0% { transform: translateX(-5%); } 100% { transform: translateX(5%); } }
+        @keyframes flashes { 0%, 95% { opacity: 0; } 96% { opacity: 0.8; } 97% { opacity: 0; } 98% { opacity: 0.5; } 100% { opacity: 0; } }
+        @keyframes orbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      `}</style>
+      <img src={src} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.5, animation: "slowZoom 30s alternate infinite linear" }} alt="" />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.85) 100%)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at top, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%)" }} />
+
+      {/* Visual FX Layers */}
+      {fx === 'rain' && <div style={{ position: "absolute", inset: "-50px -50px -100px -50px", backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' width=\\\'150\\\' height=\\\'150\\\'%3E%3Cline x1=\\\'75\\\' y1=\\\'0\\\' x2=\\\'65\\\' y2=\\\'150\\\' stroke=\\\'rgba(255,255,255,0.15)\\\' stroke-width=\\\'1.5\\\' stroke-linecap=\\\'round\\\' stroke-dasharray=\\\'15 40\\\'/%3E%3Cline x1=\\\'20\\\' y1=\\\'50\\\' x2=\\\'10\\\' y2=\\\'200\\\' stroke=\\\'rgba(255,255,255,0.1)\\\' stroke-width=\\\'1\\\' stroke-linecap=\\\'round\\\' stroke-dasharray=\\\'25 60\\\'/%3E%3Cline x1=\\\'130\\\' y1=\\\'30\\\' x2=\\\'120\\\' y2=\\\'180\\\' stroke=\\\'rgba(255,255,255,0.2)\\\' stroke-width=\\\'2\\\' stroke-linecap=\\\'round\\\' stroke-dasharray=\\\'10 50\\\'/%3E%3C/svg%3E")', animation: 'rainFall 0.4s linear infinite' }} />}
+      {fx === 'fog' && <div style={{ position: "absolute", inset: "-30%", background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.15) 0%, transparent 60%)', filter: 'blur(30px)', animation: 'drift 15s alternate infinite ease-in-out' }} />}
+      {fx === 'flashes' && <div style={{ position: "absolute", inset: 0, background: 'white', opacity: 0, animation: 'flashes 6s infinite' }} />}
+      {fx === 'stars' && <div style={{ position: "absolute", inset: "-50%", backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '60px 60px', opacity: 0.15, animation: 'orbit 100s infinite linear' }} />}
+    </div>
+  );
+};
+
 const BGS = {
-  night: () => (
-    <div style={{ position: "absolute", inset: 0, minHeight: "100vh", background: `radial-gradient(ellipse at bottom, #111424 0%, ${C.bg} 100%)`, zIndex: 0 }} />
-  ),
-  cafe: () => (
-    <div style={{ position: "absolute", inset: 0, minHeight: "100vh", background: "#2a1f1a", overflow: "hidden", zIndex: 0 }}>
-      {/* Window */}
-      <div style={{ position: "absolute", top: "10%", left: "10%", width: "30%", height: "60%", border: "10px solid #1a120f", background: "#0a1526" }}>
-        {/* Rain/City lights */}
-        <div style={{ position: "absolute", bottom: "20%", left: "40%", width: 4, height: 4, background: "#ffcc00", borderRadius: "50%", filter: "blur(2px)", animation: "pulse 2s infinite" }} />
-        <div style={{ position: "absolute", bottom: "30%", right: "30%", width: 6, height: 6, background: "#ff3366", borderRadius: "50%", filter: "blur(4px)", animation: "pulse 3s infinite reverse" }} />
-      </div>
-      {/* Table edge */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "15%", background: "linear-gradient(to bottom, #3d2a20, #1a120f)", borderTop: "2px solid #5c4030" }} />
-      {/* Coffee cup */}
-      <div style={{ position: "absolute", bottom: "12%", right: "25%", width: 40, height: 50, background: "#e8e1d7", borderRadius: "5px 5px 20px 20px", boxShadow: "-10px 10px 20px rgba(0,0,0,0.5)" }}>
-        <div style={{ position: "absolute", top: -10, left: 10, width: 2, height: 20, background: "rgba(255,255,255,0.2)", filter: "blur(2px)", animation: "float 4s infinite" }} />
-        <div style={{ position: "absolute", top: -5, left: 25, width: 2, height: 25, background: "rgba(255,255,255,0.1)", filter: "blur(2px)", animation: "float 3s infinite reverse" }} />
-      </div>
-    </div>
-  ),
-  beach: () => (
-    <div style={{ position: "absolute", inset: 0, minHeight: "100vh", background: "linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 40%, #006994 40%, #004B6B 70%, #C2B280 70%, #E6DAB8 100%)", overflow: "hidden", zIndex: 0 }}>
-      {/* Sun */}
-      <div style={{ position: "absolute", top: "15%", right: "20%", width: 80, height: 80, background: "#FFD700", borderRadius: "50%", boxShadow: "0 0 40px #FFD700, 0 0 100px #FFA500" }} />
-      {/* Clouds */}
-      <div style={{ position: "absolute", top: "10%", left: "10%", width: 120, height: 40, background: "rgba(255,255,255,0.8)", borderRadius: 40, filter: "blur(4px)", animation: "float 10s infinite" }} />
-      <div style={{ position: "absolute", top: "25%", right: "40%", width: 160, height: 50, background: "rgba(255,255,255,0.6)", borderRadius: 40, filter: "blur(6px)", animation: "float 15s infinite reverse" }} />
-      {/* Waves (animated) */}
-      <div style={{ position: "absolute", top: "45%", left: "-10%", right: "-10%", height: "25%", background: "linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 20%)", animation: "float 4s infinite", opacity: 0.5 }} />
-      {/* Palm tree sillhouette */}
-      <div style={{ position: "absolute", bottom: "10%", left: "-5%", width: 30, height: 300, background: "#2F4F4F", transform: "rotate(15deg)", borderRadius: "0 0 0 20px / 0 0 0 150px" }} />
-    </div>
-  )
+  night: () => <AnimatedImageBg src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1920&q=80" fx="stars" />, // City skyline at night with stars
+  cafe: () => <AnimatedImageBg src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=80" fx="fog" />, // Cozy Cafe + Fog
+  space: () => <AnimatedImageBg src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1920&q=80" fx="stars" />, // Galaxy Nebula + Stars
+  beach: () => <AnimatedImageBg src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80" fx="fog" />, // Tropical beach sun + glow
+  forest: () => <AnimatedImageBg src="https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1920&q=80" fx="rain" />, // Rain forest + Rain FX
+  stadium: () => <AnimatedImageBg src="https://images.unsplash.com/photo-1518605368461-1ee7e55cd731?auto=format&fit=crop&w=1920&q=80" fx="flashes" /> // Stadium field + Camera flashes
 };
 
 function AvatarRoomScreen({ onBack, session }) {
@@ -511,14 +507,13 @@ Keep responses under 30 words. Be in character.`;
       {/* Content Layer */}
       <div style={{ position: "relative", zIndex: 1, padding: "28px 24px", height: "100vh", display: "flex", flexDirection: "column" }}>
 
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, maxWidth: 1000, margin: "0 auto", width: "100%", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20, maxWidth: 1000, margin: "0 auto", width: "100%", flexShrink: 0, gap: 16 }}>
           <Btn onClick={() => { window.speechSynthesis.cancel(); onBack(); }} v="ghost" sz="sm">← WAR ROOM</Btn>
-          <div style={{ display: "flex", gap: 10, background: "rgba(0,0,0,0.5)", padding: 4, borderRadius: 8, backdropFilter: "blur(10px)" }}>
-            {["night", "cafe", "beach"].map(k => (
+          <div style={{ display: "flex", gap: 10, background: "rgba(0,0,0,0.7)", padding: 8, borderRadius: 8, backdropFilter: "blur(10px)", flexWrap: "wrap", justifyContent: "center", border: `1px solid ${C.border}` }}>
+            {Object.keys(BGS).map(k => (
               <button key={k} onClick={() => setBgKey(k)} style={{
-                background: bgKey === k ? C.surfaceHigh : "transparent", color: bgKey === k ? C.text : C.textDim,
-                border: `1px solid ${bgKey === k ? C.border : "transparent"}`, padding: "6px 14px", borderRadius: 4,
+                background: bgKey === k ? C.blue : "rgba(255,255,255,0.05)", color: bgKey === k ? "#fff" : C.textDim,
+                border: `1px solid ${bgKey === k ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.1)"}`, padding: "8px 16px", borderRadius: 4,
                 fontFamily: "'IBM Plex Mono',monospace", fontSize: 11, cursor: "pointer", textTransform: "uppercase", transition: "all 0.2s"
               }}>{k}</button>
             ))}
@@ -571,8 +566,9 @@ Keep responses under 30 words. Be in character.`;
 
           <div style={{ flexGrow: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 16, padding: "0 10px 20px" }} className="hide-scroll">
             {chatLog.length === 0 && (
-              <div style={{ margin: "auto", textAlign: "center", opacity: 0.5 }}>
-                <Mono s={11} c={C.textDim}>Awaiting input...</Mono>
+              <div style={{ margin: "auto", textAlign: "center", padding: "30px 20px", background: "rgba(0,0,0,0.6)", borderRadius: 12, border: `1px dashed ${AGENTS.find(a => a.id === activeId)?.color}80`, backdropFilter: "blur(5px)" }}>
+                <Mono s={14} c={C.text} style={{ marginBottom: 12, display: "block", letterSpacing: "2px" }}>COMM-LINK ESTABLISHED</Mono>
+                <Mono s={11} c={C.textDim} style={{ lineHeight: 1.6 }}>Clique sur le 🎙️ en bas et parle à <strong style={{ color: AGENTS.find(a => a.id === activeId)?.color }}>{AGENTS.find(a => a.id === activeId)?.label}</strong><br />...Ou tape ton message dans la barre texte !</Mono>
               </div>
             )}
             {chatLog.map((m, i) => (
